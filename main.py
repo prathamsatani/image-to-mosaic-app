@@ -1,6 +1,6 @@
 import gradio as gr
 import numpy as np
-from utils.mosaic_generator import VectorizedMosaicGenerator, MosaicGenerator
+from utils.mosaic_generator import VectorizedMosaicGenerator
 from pytorch_msssim import ms_ssim
 import torch
 
