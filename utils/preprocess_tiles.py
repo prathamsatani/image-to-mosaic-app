@@ -19,7 +19,9 @@ class PreprocessTiles:
             "height": height,
             "mode": mode,
             "format": format,
-            "dominant_color": dominant_color
+            "Dominant-Red": dominant_color[2],
+            "Dominant-Green": dominant_color[1],
+            "Dominant-Blue": dominant_color[0]
         }
     
     def preprocess_tiles(self, dir: str):
