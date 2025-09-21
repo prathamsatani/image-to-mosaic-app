@@ -4,13 +4,6 @@ from utils.mosaic_generator import VectorizedMosaicGenerator, MosaicGenerator
 from pytorch_msssim import ms_ssim
 import torch
 
-custom_css = """
-.gradio-container {
-    margin: 0 !important;
-}
-"""
-
-mosaic_generator = MosaicGenerator()
 vectorized_mosaic_generator = VectorizedMosaicGenerator()
 
 def rearrange_image(image: np.ndarray) -> torch.Tensor:
@@ -32,15 +25,7 @@ def generate_mosaic(image: np.ndarray, chunks: int):
         raise ValueError("Input is required")
     image_array = np.asarray(image)
     
-    mosaic = mosaic_generator.create_mosaic(image_array, chunks)
     vectorized_mosaic = vectorized_mosaic_generator.create_mosaic(image_array, chunks)
-    
-    score = ms_ssim(
-        rearrange_image(match_dimensions(image_array, mosaic.shape[:2])), 
-        rearrange_image(mosaic), 
-        data_range=255,  
-        size_average=True
-    )
     
     score_vectorized = ms_ssim(
         rearrange_image(match_dimensions(image_array, vectorized_mosaic.shape[:2])), 
@@ -48,18 +33,16 @@ def generate_mosaic(image: np.ndarray, chunks: int):
         data_range=255,  
         size_average=True
     )
-    return mosaic, vectorized_mosaic, f"## Multi-SSIM Score: {score.item():.4f}", f"## Vectorized Multi-SSIM Score: {score_vectorized.item():.4f}"
+    return vectorized_mosaic, f"## Vectorized Multi-SSIM Score: {score_vectorized.item():.4f}"
 
 with gr.Blocks(fill_width=True) as demo:
     gr.Markdown("# Image to Mosaic Generator")
     with gr.Row():
         image = gr.Image(placeholder="Upload an image")
         vectorized_out = gr.Image()
-        out = gr.Image()
     slider = gr.Slider(minimum=1, maximum=200, step=5, label="Number of chunks")
     vectorized_score_output = gr.Markdown()
-    score_output = gr.Markdown()
     btn = gr.Button("Run")
-    btn.click(fn=generate_mosaic, inputs=[image, slider], outputs=[out, vectorized_out, score_output, vectorized_score_output])
+    btn.click(fn=generate_mosaic, inputs=[image, slider], outputs=[vectorized_out, vectorized_score_output])
 
 demo.launch(pwa=True)
