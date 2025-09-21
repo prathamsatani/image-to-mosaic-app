@@ -29,9 +29,10 @@ class PreprocessTiles:
                 filepath = os.path.join(dir, filename)
                 metadata = self.generate_image_metadata(filepath)
                 tiles_metadata.append(metadata)
-        return pd.DataFrame(tiles_metadata)
+                
+        pd.DataFrame(tiles_metadata).to_csv("tiles_metadata.csv", index=False)
+        print(f"Tiles metadata saved to {os.path.abspath('tiles_metadata.csv')}")
 
 if __name__ == "__main__":
-    # processor = PreprocessTiles()
-    # df = processor.preprocess_tiles(os.getcwd())
-    print(os.getcwd())
+    processor = PreprocessTiles()
+    processor.preprocess_tiles(os.path.join(os.getcwd(), "images"))
