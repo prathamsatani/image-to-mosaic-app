@@ -40,10 +40,8 @@ def generate_mosaic(image: np.ndarray, chunks: int, tile_retrieval: str = "neare
 
     image_array = np.asarray(image)
 
-    # Create mosaic
     vectorized_mosaic = vectorized_mosaic_generator.create_mosaic(image_array, chunks, tile_retrieval)
 
-    # Ensure types and shapes for MS-SSIM
     score_vectorized = ms_ssim(
         rearrange_image(match_dimensions(image_array, vectorized_mosaic.shape[:2])),
         rearrange_image(vectorized_mosaic),
@@ -61,7 +59,6 @@ def _run_mosaic_adapter(image, grid_choice, selection_mode, seed_value):
     - selection_mode: 'Nearest match' | 'Random tiles'
     - seed_value: optional numeric seed for reproducibility (only used for random tiles)
     """
-    # First quick validation and immediate feedback
     if image is None:
         yield None, "❗ Please upload an input image."
         return
@@ -69,33 +66,25 @@ def _run_mosaic_adapter(image, grid_choice, selection_mode, seed_value):
     try:
         grid_size = int(str(grid_choice).split("x", 1)[0])
     except Exception:
-        grid_size = 32  # fallback
+        grid_size = 32  
 
-    # Map selection_mode UI -> generator parameter
     tile_retrieval = "nearest" if str(selection_mode).lower().startswith("nearest") else "random"
 
-    # Provide an immediate UI update
     yield None, "⏳ Running mosaic generation..."
 
-    # If user asked for randomness and provided a seed, set seeds for reproducibility.
     try:
         if tile_retrieval == "random" and seed_value is not None:
-            # Accept float/int-ish inputs, coerce to int if possible
             seed_int = int(seed_value)
             np.random.seed(seed_int)
             random.seed(seed_int)
-            # If VectorizedMosaicGenerator supports injection of RNG, you could do:
-            # vectorized_mosaic_generator.rng = np.random.default_rng(seed_int)
+            
     except Exception:
-        # ignore seed errors but continue; reproducibility won't be guaranteed
         pass
 
-    # Run mosaic generation and catch exceptions so UI shows them
     try:
         mosaic, score_md = generate_mosaic(image, grid_size, tile_retrieval=tile_retrieval)
         yield mosaic, score_md
     except Exception as e:
-        # Return the exception message to the UI instead of crashing
         yield None, f"❗ Error while generating mosaic: {str(e)}"
 
 
@@ -110,7 +99,6 @@ with gr.Blocks(fill_width=True, title="Image to Mosaic Generator") as demo:
         """
     )
 
-    # Top row: input (left) and output (right)
     with gr.Row():
         with gr.Column(scale=1):
             input_image = gr.Image(
@@ -123,11 +111,8 @@ with gr.Blocks(fill_width=True, title="Image to Mosaic Generator") as demo:
             mosaic_out = gr.Image(label="Mosaic Output", type="numpy")
             mosaic_score = gr.Markdown(label="Score / Info")
 
-    # Full-width parameter row spanning both columns
     with gr.Row():
-        # Use a single Column with double scale so it visually spans the layout
         with gr.Column(scale=2):
-            # place controls in a nested Row so they appear side-by-side
             with gr.Row():
                 grid_radio = gr.Radio(
                     choices=["16x16", "32x32", "64x64"],
@@ -148,7 +133,6 @@ with gr.Blocks(fill_width=True, title="Image to Mosaic Generator") as demo:
                 )
             btn = gr.Button("Run", variant="primary")
 
-    # Hook up the button as before
     btn.click(
         fn=_run_mosaic_adapter,
         inputs=[input_image, grid_radio, selection_mode, seed_input],
@@ -156,6 +140,5 @@ with gr.Blocks(fill_width=True, title="Image to Mosaic Generator") as demo:
         show_progress=True,
     )
 
-# If running standalone:
 if __name__ == "__main__":
     demo.launch(pwa=True)
