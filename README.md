@@ -2,9 +2,12 @@
 
 A high-performance Python application that transforms images into artistic mosaics using vectorized NumPy operations and a tile-matching algorithm. Built with Gradio for an intuitive web interface.
 
+**Academic Project** - CS5130 Applied Programming and Data Processing for AI, Northeastern University
+
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Gradio](https://img.shields.io/badge/Gradio-4.0%2B-orange)
+![NEU](https://img.shields.io/badge/NEU-CS5800-red)
 
 ## 🎨 Features
 
@@ -168,15 +171,27 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
+- **Professor [Lino Coria Mendoza](https://scholar.google.com/citations?user=UYvHwn8AAAAJ&hl=en)** - CS5800 Algorithms, Northeastern University
+- Lab assignment focusing on vectorized operations and algorithmic optimization
 - Inspired by classical photomosaic techniques
 - MS-SSIM implementation from [pytorch-msssim](https://github.com/VainF/pytorch-msssim)
 - Gradio team for the excellent web framework
 
+## 🎓 Academic Information
+
+**Course**: CS5130 - Applied Programming and Data Processing for AI  
+**Institution**: Northeastern University  
+**Professor**: Dr. Lino Coria Mendoza  
+**Semester**: Fall 2025  
+**Assignment**: Lab Activity - Interactive Image Mosaic Generator Using Gradio
+
 ## 📧 Contact
 
-Pratham - [Your Email/GitHub Profile]
+**Student**: Pratham Satani  
+**Email**: [satani.p@northeastern.edu](mailto:satani.p@northeastern.edu)  
+**GitHub**: [https://github.com/prathamsatani](https://github.com/prathamsatani)
 
-Project Link: [https://github.com/yourusername/image-to-mosaic-generator](https://github.com/yourusername/image-to-mosaic-generator)
+**Project Link**: [https://github.com/prathamsatani/image-to-mosaic-app](https://github.com/prathamsatani/image-to-mosaic-app)
 
 ---
 
