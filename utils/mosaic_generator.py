@@ -180,6 +180,43 @@ class VectorizedMosaicGenerator:
         
         return tile_images
     
+    def retrieve_tile_images_randomly(self, chunks: np.ndarray) -> np.ndarray:
+        
+        n_rows, n_cols, chunk_h, chunk_w, channels = chunks.shape
+        chunks_flat = chunks.reshape(-1, chunk_h, chunk_w, channels)
+
+        rng = np.random.default_rng()
+        num_tiles = len(self.tiles_metadata)
+        random_indices = rng.integers(0, num_tiles, size=chunks_flat.shape[0])
+
+        tile_filenames = self.tiles_metadata.iloc[random_indices]['filename'].values
+
+        tile_images = np.zeros((n_rows, n_cols, chunk_h, chunk_w, channels), dtype=np.uint8)
+
+        for idx, filename in enumerate(tile_filenames):
+            row, col = divmod(idx, n_cols)
+            image_path = os.path.join(os.getcwd(), "images", filename)
+
+            tile = cv2.imread(image_path)
+            if tile is None:
+                tile = np.zeros((chunk_h, chunk_w, channels), dtype=np.uint8)
+            else:
+                tile = cv2.cvtColor(tile, cv2.COLOR_BGR2RGB)
+                if tile.ndim == 2 and channels == 3:
+                    tile = cv2.cvtColor(tile, cv2.COLOR_GRAY2RGB)
+                elif tile.ndim == 3 and tile.shape[2] != channels:
+                    if channels == 1:
+                        tile = cv2.cvtColor(tile, cv2.COLOR_RGB2GRAY)[..., np.newaxis]
+                    else:
+                        tile = tile[..., :channels]
+
+                resized_tile = cv2.resize(tile, (chunk_w, chunk_h), interpolation=cv2.INTER_AREA)
+                tile = resized_tile
+
+            tile_images[row, col] = tile
+
+        return tile_images
+    
     def superimpose_tiles_and_chunks(self, chunks: np.ndarray, tiles: np.ndarray) -> np.ndarray:
         """
         Superimpose tile images onto their corresponding chunks.
@@ -253,30 +290,25 @@ class VectorizedMosaicGenerator:
         except Exception as e:
             logger.error(f"Error stitching chunks: {str(e)}")
             raise
-        
-    
-    def create_mosaic(self, image_array: np.ndarray, n_chunks: int) -> np.ndarray:
+
+
+    def create_mosaic(self, image_array: np.ndarray, n_chunks: int, tile_retrieval: str) -> np.ndarray:
         """
         Create a mosaic effect on an image using fully vectorized operations.
         
         This method combines all steps: chunking, rotating, and stitching.
-        
+
         Args:
             image_array: Input image as a NumPy array.
             n_chunks: Number of chunks per dimension (creates n_chunks×n_chunks grid).
-        
+            tile_retrieval: Method for retrieving tiles ("nearest" or "random").
+
         Returns:
             Mosaic image as a NumPy array with the same type as input.
-        
+
         Raises:
             TypeError: If inputs are not of the expected type.
             ValueError: If n_chunks is invalid or image is too small.
-        
-        Example:
-            >>> generator = VectorizedMosaicGenerator()
-            >>> image = cv2.imread('input.jpg')
-            >>> mosaic = generator.create_mosaic(image, 5)
-            >>> cv2.imwrite('mosaic.jpg', mosaic)
         """
         try:
             if not isinstance(image_array, np.ndarray):
@@ -292,7 +324,10 @@ class VectorizedMosaicGenerator:
             
             chunks = self.convert_to_chunks(image_array, n_chunks)
             averaged_chunks = self.average_chunks_color(chunks)
-            tile_images = self.retrieve_tile_images(chunks)
+            if tile_retrieval == "nearest":
+                tile_images = self.retrieve_tile_images(chunks)
+            else:
+                tile_images = self.retrieve_tile_images(chunks)
             superimposed_chunks = self.superimpose_tiles_and_chunks(averaged_chunks, tile_images)
             mosaic = self.stitch_chunks(superimposed_chunks)
 
