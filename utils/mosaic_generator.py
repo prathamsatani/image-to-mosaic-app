@@ -217,7 +217,7 @@ class VectorizedMosaicGenerator:
 
         return tile_images
     
-    def superimpose_tiles_and_chunks(self, chunks: np.ndarray, tiles: np.ndarray) -> np.ndarray:
+    def superimpose_tiles_and_chunks(self, chunks: np.ndarray, tiles: np.ndarray, tile_retrieval: str) -> np.ndarray:
         """
         Superimpose tile images onto their corresponding chunks.
 
@@ -240,8 +240,8 @@ class VectorizedMosaicGenerator:
 
             for i in range(chunks.shape[0]):
                 for j in range(chunks.shape[1]):
-                    alpha = 0.5
-                    beta = 0.5
+                    alpha = 0.5 if tile_retrieval == "nearest" else 1
+                    beta = 0.5 if tile_retrieval == "nearest" else 0.3
                     chunks[i, j] = cv2.addWeighted(chunks[i, j], alpha, tiles[i, j], beta, 0)
 
             logger.debug(f"Superimposed tiles onto chunks")
@@ -327,8 +327,9 @@ class VectorizedMosaicGenerator:
             if tile_retrieval == "nearest":
                 tile_images = self.retrieve_tile_images(chunks)
             else:
-                tile_images = self.retrieve_tile_images(chunks)
-            superimposed_chunks = self.superimpose_tiles_and_chunks(averaged_chunks, tile_images)
+                tile_images = self.retrieve_tile_images_randomly(chunks)
+                
+            superimposed_chunks = self.superimpose_tiles_and_chunks(averaged_chunks, tile_images, tile_retrieval)
             mosaic = self.stitch_chunks(superimposed_chunks)
 
             logger.info(f"Successfully created mosaic of shape {mosaic.shape}")
