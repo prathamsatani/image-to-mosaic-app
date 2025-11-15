@@ -1,12 +1,12 @@
 import gradio as gr
 import numpy as np
-from utils.mosaic_generator import VectorizedMosaicGenerator
+from utils.mosaic_generator import OptimizedMosaicGenerator
 from pytorch_msssim import ms_ssim
 import torch
 import random
 import os
 
-vectorized_mosaic_generator = VectorizedMosaicGenerator()
+vectorized_mosaic_generator = OptimizedMosaicGenerator()
 
 
 def rearrange_image(image: np.ndarray) -> torch.Tensor:
@@ -77,7 +77,6 @@ def _run_mosaic_adapter(image, grid_choice, selection_mode, seed_value):
             seed_int = int(seed_value)
             np.random.seed(seed_int)
             random.seed(seed_int)
-            
     except Exception:
         pass
 
@@ -107,6 +106,21 @@ with gr.Blocks(fill_width=True, title="Image to Mosaic Generator") as demo:
                 interactive=True,
                 placeholder="Upload or drop an image here",
             )
+
+            examples_list = [
+                ["examples/example_1.png", "64x64", "Random tiles", None],
+                ["examples/example_2.png", "32x32", "Nearest Match", 42],
+                ["examples/example_3.png", "16x16", "Nearest match", None],
+                ["examples/example_4.png", "32x32", "Random tiles", 123],
+                ["examples/example_5.png", "64x64", "Nearest match", None]
+            ]
+
+            gr.Examples(
+                examples=examples_list,
+                inputs=[input_image],
+                label="Click an example to populate the Input Image"
+            )
+
         with gr.Column(scale=1):
             mosaic_out = gr.Image(label="Mosaic Output", type="numpy")
             mosaic_score = gr.Markdown(label="Score / Info")
@@ -141,4 +155,4 @@ with gr.Blocks(fill_width=True, title="Image to Mosaic Generator") as demo:
     )
 
 if __name__ == "__main__":
-    demo.launch(pwa=True)
+    demo.launch(share=True)

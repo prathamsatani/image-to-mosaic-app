@@ -1,3 +1,9 @@
+---
+title: image-to-mosaic-app
+app_file: main.py
+sdk: gradio
+sdk_version: 5.43.1
+---
 # Image to Mosaic Generator
 
 A high-performance Python application that transforms images into artistic mosaics using vectorized NumPy operations and a tile-matching algorithm. Built with Gradio for an intuitive web interface.

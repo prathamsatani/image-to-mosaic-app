@@ -3,8 +3,23 @@ import pandas as pd
 import cv2
 
 class PreprocessTiles:
+    def _rgb_to_text(self, r, g, b):
+        color = None
+        if r > g and r > b:
+            color = "Red"
+        elif g > r and g > b:
+            color = "Green"
+        elif b > r and b > g:
+            color = "Blue"
+        elif r == g and r > b:
+            color = "Yellow"
+        elif r == b and r > g:
+            color = "Cyan"
+        elif g == b and g > r:
+            color = "Magenta"
+        return color
+
     def generate_image_metadata(self, image_path: str):
-        
         image = cv2.imread(image_path)
         if image is None:
             raise ValueError(f"Could not read image at path: {image_path}")
@@ -21,7 +36,8 @@ class PreprocessTiles:
             "format": format,
             "average-red": dominant_color[2],
             "average-green": dominant_color[1],
-            "average-blue": dominant_color[0]
+            "average-blue": dominant_color[0],
+            "dominant-color": self._rgb_to_text(int(dominant_color[2]), int(dominant_color[1]), int(dominant_color[0]))
         }
     
     def preprocess_tiles(self, dir: str):

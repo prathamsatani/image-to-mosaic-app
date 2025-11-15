@@ -1,0 +1,8 @@
+numpy
+opencv-python
+pandas
+pytorch-msssim
+pytorch
+torch
+gradio
+torchvision
