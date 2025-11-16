@@ -1,8 +1,17 @@
-numpy
-opencv-python
-pandas
-pytorch-msssim
-pytorch
-torch
-gradio
-torchvision
+# Core dependencies with version specifications
+numpy>=1.24.0,<2.0.0
+pandas>=2.0.0,<3.0.0
+opencv-python>=4.8.0,<5.0.0
+Pillow>=10.0.0,<11.0.0
+
+# PyTorch and related packages
+torch>=2.0.0,<3.0.0
+torchvision>=0.15.0,<1.0.0
+pytorch-msssim>=1.0.0,<2.0.0
+
+# Web interface
+gradio>=4.0.0,<5.0.0
+
+# Testing (optional)
+pytest>=7.4.0,<8.0.0
+pytest-cov>=4.1.0,<5.0.0
