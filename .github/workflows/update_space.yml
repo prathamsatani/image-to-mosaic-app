@@ -12,18 +12,32 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
-        fetch-depth: 0
-        lfs: true
-        
-    - name: Push to Hugging Face Spaces
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        pip install huggingface_hub
+    
+    - name: Deploy to HF Spaces
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
-        # Configure git
-        git config --global user.email "action@github.com"
-        git config --global user.name "GitHub Action"
+        python - <<EOF
+        import os
+        from huggingface_hub import HfApi, upload_folder
         
-        # Push to HF space (replace YOUR_USERNAME and YOUR_SPACE_NAME)
-        git remote add space https://titanite09:$HF_TOKEN@huggingface.co/spaces/titanite09/image-to-mosaic-app
-        git push space main:main --force
+        api = HfApi(token=os.environ['HF_TOKEN'])
+        
+        # Upload the entire folder
+        api.upload_folder(
+            folder_path=".",
+            repo_id="titanite09/image-to-mosaic-app",
+            repo_type="space",
+            ignore_patterns=[".github/*", ".git/*", "__pycache__/*", "*.pyc"]
+        )
+        print("Successfully deployed to Hugging Face Spaces!")
+        EOF
