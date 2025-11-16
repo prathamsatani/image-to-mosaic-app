@@ -34,7 +34,8 @@ A high-performance, modular Python package that transforms images into artistic 
   - **Nearest Match**: Intelligent color-based tile matching using Euclidean distance
   - **Random Tiles**: Artistic variations with reproducible random seeds
 - **Quality Metrics**: MS-SSIM, SSIM, MSE, and PSNR for quantitative evaluation
-- **Interactive UI**: Modern Gradio-based web interface with real-time progress
+- **Interactive UI**: Modern Gradio-based web interface with real-time progress and device detection
+- **Device Visibility**: Automatic detection and display of compute device (CPU/GPU) with hardware name
 
 ### 🏗️ Architecture
 - **Modular Design**: Clean separation of concerns across modules
@@ -123,6 +124,7 @@ The interface will open in your browser (typically `http://localhost:7860`).
 - Choose tile selection mode (Nearest match or Random)
 - Optional: Set random seed for reproducibility
 - View MS-SSIM quality score and processing time
+- **Device indicator**: Shows whether CPU or GPU is being used (e.g., 🎮 GPU: NVIDIA GeForce RTX 3080)
 
 ### Programmatic Usage
 
@@ -157,11 +159,24 @@ cv2.imwrite('output.jpg', cv2.cvtColor(mosaic, cv2.COLOR_RGB2BGR))
 
 ### Advanced Examples
 
+**Check device information:**
+```python
+from mosaic_generator.config import get_device
+import torch
+
+device = get_device()
+print(f"Using device: {device}")
+if device.type == 'cuda':
+    print(f"GPU: {torch.cuda.get_device_name(0)}")
+```
+
 **Random mosaic with seed:**
 ```python
 import numpy as np
+import torch
 
 np.random.seed(42)
+torch.manual_seed(42)
 mosaic = builder.create_mosaic(
     image,
     grid_size=32,
@@ -285,14 +300,14 @@ MAX_GRID_SIZE = 128
 
 ## 🎯 Performance Benchmarks
 
-**Comparison with Lab 1 (Vectorized NumPy):**
+**Performance Comparison (CPU vs GPU):**
 
-| Image Size | Grid | Lab 1 (NumPy CPU) | Lab 2 (PyTorch GPU) | Speedup |
-|------------|------|-------------------|---------------------|---------|
-| 512×512    | 16×16| 0.85s            | 0.12s              | 7.1×    |
-| 512×512    | 32×32| 1.42s            | 0.18s              | 7.9×    |
-| 1024×1024  | 32×32| 3.21s            | 0.35s              | 9.2×    |
-| 1024×1024  | 64×64| 5.67s            | 0.58s              | 9.8×    |
+| Image Size | Grid | NumPy (CPU) | PyTorch (GPU) | Speedup |
+|------------|------|-------------|---------------|---------|  
+| 512×512    | 16×16| 0.85s       | 0.12s        | 7.1×    |
+| 512×512    | 32×32| 1.42s       | 0.18s        | 7.9×    |
+| 1024×1024  | 32×32| 3.21s       | 0.35s        | 9.2×    |
+| 1024×1024  | 64×64| 5.67s       | 0.58s        | 9.8×    |
 
 **Hardware:** NVIDIA RTX 3080 (10GB), Intel i9-10900K
 
@@ -363,9 +378,10 @@ This project is licensed under the MIT License.
 ## 📧 Contact
 
 **Student:** Pratham Satani  
+**NUID:** 002836219  
 **Email:** [satani.p@northeastern.edu](mailto:satani.p@northeastern.edu)  
 **GitHub:** [https://github.com/prathamsatani](https://github.com/prathamsatani)  
-**Project:** [https://github.com/prathamsatani/image-to-mosaic-app](https://github.com/prathamsatani/image-to-mosaic-app)
+**Project Repository:** [https://github.com/prathamsatani/image-to-mosaic-app](https://github.com/prathamsatani/image-to-mosaic-app)
 
 ---
 
@@ -375,7 +391,7 @@ This project is licensed under the MIT License.
 **Institution:** Northeastern University  
 **Professor:** Dr. Lino Coria Mendoza  
 **Semester:** Fall 2025  
-**Lab:** Part 3 - Refactor for Modularity
+**Assignment:** Lab 1 - Image to Mosaic Generator (Modular Architecture)
 
 ---
 
