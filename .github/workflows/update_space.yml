@@ -14,30 +14,16 @@ jobs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-        lfs: false  # We'll handle LFS manually
-        
-    - name: Configure Git LFS
-      run: |
-        git lfs install
-        git lfs track "*.png"
-        git lfs track "*.jpg"
-        git lfs track "*.jpeg"
-        git lfs track "*.gif"
-        git lfs track "*.bmp"
-        git lfs track "examples/*"
-        git add .gitattributes
-        git add -A
-        git config --global user.email "action@github.com"
-        git config --global user.name "GitHub Action"
-        git commit -m "Track images with LFS" || echo "No changes to commit"
+        lfs: true
         
     - name: Push to Hugging Face Spaces
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
-        # Add HF space as remote
-        git remote add space https://titanite09:$HF_TOKEN@huggingface.co/spaces/titanite09/image-to-mosaic-app
+        # Configure git
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
         
-        # Push with LFS
-        git lfs push space main --all
+        # Push to HF space (replace YOUR_USERNAME and YOUR_SPACE_NAME)
+        git remote add space https://titanite09:$HF_TOKEN@huggingface.co/spaces/titanite09/image-to-mosaic-app
         git push space main:main --force
