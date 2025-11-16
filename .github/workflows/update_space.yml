@@ -1,4 +1,4 @@
-name: Run Python script
+name: Deploy to HF Spaces
 
 on:
   push:
@@ -6,23 +6,24 @@ on:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/checkout@v3
       with:
-        python-version: '3.9'
-
-    - name: Install Gradio
-      run: python -m pip install gradio
-
-    - name: Log in to Hugging Face
-      run: python -c 'import huggingface_hub; huggingface_hub.login(token="${{ secrets.hf_token }}")'
-
-    - name: Deploy to Spaces
-      run: gradio deploy
+        fetch-depth: 0
+        lfs: true
+        
+    - name: Push to Hugging Face Spaces
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      run: |
+        # Configure git
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+        
+        # Push to HF space (replace YOUR_USERNAME and YOUR_SPACE_NAME)
+        git remote add space https://titanite09:$HF_TOKEN@huggingface.co/spaces/titanite09/image-to-mosaic-app
+        git push space main:main --force
