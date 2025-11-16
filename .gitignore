@@ -8,3 +8,7 @@ wheels/
 .gradio/
 # Virtual environments
 .venv
+.pytest_cache/
+*.png
+*.json
+*.ipynb

@@ -15,3 +15,6 @@ gradio>=4.0.0,<5.0.0
 # Testing (optional)
 pytest>=7.4.0,<8.0.0
 pytest-cov>=4.1.0,<5.0.0
+
+$# Hugging Face Hub for model management
+huggingface-hub==0.34.3
