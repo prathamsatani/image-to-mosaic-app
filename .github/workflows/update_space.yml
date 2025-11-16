@@ -20,7 +20,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install huggingface_hub
+        pip install --upgrade huggingface_hub
     
     - name: Deploy to HF Spaces
       env:
@@ -28,16 +28,18 @@ jobs:
       run: |
         python - <<EOF
         import os
-        from huggingface_hub import HfApi, upload_folder
+        from huggingface_hub import HfApi
         
         api = HfApi(token=os.environ['HF_TOKEN'])
         
-        # Upload the entire folder
-        api.upload_folder(
+        # Use upload_large_folder for better handling
+        api.upload_large_folder(
             folder_path=".",
             repo_id="titanite09/image-to-mosaic-app",
             repo_type="space",
-            ignore_patterns=[".github/*", ".git/*", "__pycache__/*", "*.pyc"]
+            ignore_patterns=[".github/*", ".git/*", "__pycache__/*", "*.pyc"],
+            multi_commits=True,
+            multi_commits_verbose=True
         )
         print("Successfully deployed to Hugging Face Spaces!")
         EOF
