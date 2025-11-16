@@ -378,7 +378,6 @@ This project is licensed under the MIT License.
 ## 📧 Contact
 
 **Student:** Pratham Satani  
-**NUID:** 002836219  
 **Email:** [satani.p@northeastern.edu](mailto:satani.p@northeastern.edu)  
 **GitHub:** [https://github.com/prathamsatani](https://github.com/prathamsatani)  
 **Project Repository:** [https://github.com/prathamsatani/image-to-mosaic-app](https://github.com/prathamsatani/image-to-mosaic-app)
@@ -391,8 +390,9 @@ This project is licensed under the MIT License.
 **Institution:** Northeastern University  
 **Professor:** Dr. Lino Coria Mendoza  
 **Semester:** Fall 2025  
-**Assignment:** Lab 1 - Image to Mosaic Generator (Modular Architecture)
+**Assignment:** Lab 5 - Optimized Image to Mosaic Generator (Modular Architecture)
 
 ---
 
 **Made with ❤️ using Python, PyTorch, and Gradio**
+
