@@ -61,7 +61,7 @@ MAX_TILE_SIZE: Tuple[int, int] = (256, 256)
 DEFAULT_TILES_DIR: str = "images"
 """Default directory containing tile images"""
 
-DEFAULT_METADATA_FILE: str = "tiles_metadata.csv"
+DEFAULT_METADATA_FILE: str = "data/tiles_metadata.csv"
 """Default CSV file with tile metadata (colors, features)"""
 
 SUPPORTED_IMAGE_FORMATS: Tuple[str, ...] = (
